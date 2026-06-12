@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Emoji Party Match – Shop. Beli booster dengan koin hasil gameplay!">
+  <title>Shop 🛍️ – Emoji Party Match</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/game.css">
+  <style>
+    html, body.scrollable { overflow-y: auto !important; height: auto !important; touch-action: auto !important; }
+  </style>
+</head>
+<body class="scrollable">
+  <div class="bg-gradient"></div>
+  <div class="bg-sparkles"></div>
+
+  <div id="shop-screen">
+
+    <!-- Header -->
+    <div id="shop-header">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:10px">
+        <button class="btn-icon" id="shop-back-btn" aria-label="Back">←</button>
+        <h1 class="shop-title">🛍️ Shop</h1>
+        <div style="width:44px"></div><!-- spacer -->
+      </div>
+      <div class="shop-coin-badge">
+        <span class="label">Koin Kamu:</span>
+        <span>🪙</span>
+        <span class="amount" id="shop-coins-amount">0</span>
+      </div>
+      <p style="font-size:0.72rem;color:rgba(216,180,254,0.55);margin-top:6px;text-align:center">
+        Mainkan level untuk mendapat koin! 🎮
+      </p>
+    </div>
+
+    <div class="section-title" style="max-width:440px">⚡ Booster</div>
+    <div id="shop-grid">
+      <!-- Rendered by shop.js -->
+    </div>
+
+    <!-- Info section -->
+    <div class="section-divider" style="max-width:440px"></div>
+    <div class="section-title" style="max-width:440px">💡 Tips Dapat Koin</div>
+    <div style="width:100%;max-width:440px;display:flex;flex-direction:column;gap:8px;margin-bottom:24px">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center">
+        <span style="font-size:1.5rem">⭐</span>
+        <div>
+          <div style="font-weight:800;font-size:0.85rem;color:white">Raih bintang lebih banyak</div>
+          <div style="font-size:0.72rem;color:rgba(216,180,254,0.6)">Skor tinggi = koin lebih banyak</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center">
+        <span style="font-size:1.5rem">🎉</span>
+        <div>
+          <div style="font-weight:800;font-size:0.85rem;color:white">Aktifkan Party Time!</div>
+          <div style="font-size:0.72rem;color:rgba(216,180,254,0.6)">Skor ×2 selama Party Time aktif</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center">
+        <span style="font-size:1.5rem">⚡</span>
+        <div>
+          <div style="font-weight:800;font-size:0.85rem;color:white">Buat chain combo!</div>
+          <div style="font-size:0.72rem;color:rgba(216,180,254,0.6)">Combo x4 = bonus skor 2× lipat</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="window.location.href='index.html'" style="padding:14px 40px;font-size:1rem">
+      🎮 Kembali & Main!
+    </button>
+
+  </div>
+
+  <script src="js/shop.js?v=2"></script>
+</body>
+</html>

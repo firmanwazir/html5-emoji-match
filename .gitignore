@@ -1,0 +1,5 @@
+.vscode/
+assets/
+node_modules/
+temp/
+take_screenshot.js

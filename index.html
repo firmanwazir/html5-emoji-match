@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Emoji Party Match – Game match-3 hewan imut! Tukar, combo, dan Party Time!">
+  <title>Emoji Party Match 🎉</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/game.css">
+  <style>
+    html, body.scrollable { overflow-y: auto !important; height: auto !important; touch-action: auto !important; }
+    #index-screen   { padding-bottom: 60px; }
+  </style>
+</head>
+<body class="scrollable">
+  <div class="bg-gradient"></div>
+  <div class="bg-sparkles"></div>
+
+  <!-- ═══════════ INDEX SCREEN ═══════════ -->
+  <div id="index-screen">
+
+    <!-- Header -->
+    <div id="index-header">
+      <h1 class="game-logo">🎉 Emoji Party Match</h1>
+      <p class="game-tagline">Match · Combo · Party!</p>
+    </div>
+
+    <!-- Top bar: lives + coins + buttons -->
+    <div id="top-bar">
+      <!-- Lives Badge -->
+      <div class="coins-display has-tooltip" style="padding: 5px 10px;">
+        <span class="icon">❤️</span>
+        <span class="amount" id="lives-amount">5</span>
+        <div class="tooltip" id="lives-regen-tooltip">Regen: Full</div>
+      </div>
+
+      <div class="coins-display">
+        <span class="icon">🪙</span>
+        <span class="amount" id="coins-amount">0</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-icon" id="sound-btn" aria-label="Toggle Sound">🔊</button>
+        <button class="btn-icon" id="quest-open-btn" aria-label="Quests" style="font-size:1.1rem">📜</button>
+        <button class="btn-icon" id="profile-open-btn" aria-label="Profile" style="font-size:1.1rem">👤</button>
+        <a href="shop.html?v=3" class="btn-icon" style="text-decoration:none;font-size:1.1rem;display:flex;align-items:center;justify-content:center" aria-label="Shop">🛍️</a>
+        <button class="btn-icon" id="howto-open-btn" aria-label="How to Play">❓</button>
+      </div>
+    </div>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-emojis">
+        <span class="hero-emoji" style="animation-delay:0s">🐱</span>
+        <span class="hero-emoji" style="animation-delay:0.15s">🐰</span>
+        <span class="hero-emoji" style="animation-delay:0.3s">🎉</span>
+        <span class="hero-emoji" style="animation-delay:0.45s">🐹</span>
+        <span class="hero-emoji" style="animation-delay:0.6s">🦊</span>
+        <span class="hero-emoji" style="animation-delay:0.75s">🐼</span>
+        <span class="hero-emoji" style="animation-delay:0.9s">🐸</span>
+      </div>
+      <p class="hero-desc">
+        Tukar hewan imut, buat combo beruntun, dan masuki mode
+        <strong style="color:var(--pink)">PARTY TIME</strong>!<br>
+        Gunakan 🚀 Rocket, 💣 Bomb, dan 🌈 Rainbow untuk skor terbaik!
+      </p>
+      <div class="feature-pills">
+        <span class="feature-pill">⚡ Combo System</span>
+        <span class="feature-pill">🎉 Party Time</span>
+        <span class="feature-pill">💣 Special Items</span>
+        <span class="feature-pill">👿 Obstacles</span>
+        <span class="feature-pill">⭐ Star Rating</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-strip">
+      <div class="stat-card glass-card">
+        <span class="stat-label">Level</span>
+        <span class="stat-value gold" id="stats-level">1</span>
+      </div>
+      <div class="stat-card glass-card">
+        <span class="stat-label">Stars</span>
+        <span class="stat-value pink" id="stats-stars">0</span>
+      </div>
+      <div class="stat-card glass-card">
+        <span class="stat-label">Coins</span>
+        <span class="stat-value cyan" id="stats-coins">0</span>
+      </div>
+    </div>
+
+    <!-- Play Now -->
+    <div class="play-btn-wrap">
+      <button class="btn btn-primary btn-play-all" onclick="window.location.href='game.html?level=1'">
+        🎮 Main Sekarang!
+      </button>
+      <button class="btn btn-icon" style="width:52px;height:52px;font-size:1.3rem" onclick="document.getElementById('howto-overlay').classList.remove('hidden')" aria-label="How to play">
+        📖
+      </button>
+    </div>
+
+    <!-- Weekly Challenge -->
+    <div style="margin: 20px; padding: 16px; background: linear-gradient(135deg, rgba(255,110,180,0.2), rgba(192,132,252,0.2)); border: 2px solid rgba(255,110,180,0.4); border-radius: 16px; text-align: center; box-shadow: 0 4px 15px rgba(255,110,180,0.15);">
+      <h3 style="margin-bottom: 8px; font-size: 1.2rem; color: #fff;">🌟 Weekly Challenge</h3>
+      <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 12px;">Taklukkan Istana Awan dan raih skor tertinggi minggu ini!</p>
+      <button class="btn btn-gold w-full" onclick="window.location.href='game.html?level=99'" style="padding: 12px; font-size: 1rem;">
+        ⚔️ Mainkan Event
+      </button>
+    </div>
+
+    <!-- Level Select -->
+    <div class="section-divider"></div>
+    <div class="section-title">🗺️ Pilih Level</div>
+    <div id="level-grid"></div>
+
+  </div><!-- #index-screen -->
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HOW TO PLAY OVERLAY                             -->
+  <!-- ═══════════ MODALS ═══════════ -->
+  
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Profil">
+    <div class="modal-card" style="max-width:380px;text-align:left;padding:24px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 class="modal-title" style="margin:0;font-size:1.3rem">👤 Profil Kamu</h2>
+        <button class="btn-icon" id="profile-close-btn" style="width:36px;height:36px;font-size:0.9rem;flex-shrink:0" aria-label="Close">✕</button>
+      </div>
+      
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+        <div style="width:70px;height:70px;border-radius:50%;background:#ffde59;display:flex;align-items:center;justify-content:center;font-size:2.5rem;box-shadow:0 4px 10px rgba(255,222,89,0.3)">
+          🌸
+        </div>
+        <div>
+          <div style="font-weight:900;font-size:1.4rem;color:white" id="profile-username">Player</div>
+          <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">Match Queen 👑</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+        <div style="background:rgba(255,255,255,0.1);padding:12px;border-radius:12px;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:4px">⭐</div>
+          <div style="font-size:1.2rem;font-weight:900" id="profile-total-stars">0</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.6)">Total Bintang</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1);padding:12px;border-radius:12px;text-align:center">
+          <div style="font-size:1.5rem;margin-bottom:4px">🏆</div>
+          <div style="font-size:1.2rem;font-weight:900" id="profile-levels-cleared">0</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.6)">Level Selesai</div>
+        </div>
+      </div>
+
+      <div class="howto-section-title">🏅 Koleksi Badge</div>
+      <div id="profile-badges" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;min-height:60px">
+        <!-- Badges rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Quest Modal -->
+  <div id="quest-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Misi Harian">
+    <div class="modal-card" style="max-width:380px;text-align:left;padding:24px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 class="modal-title" style="margin:0;font-size:1.3rem">📜 Misi Harian</h2>
+        <button class="btn-icon" id="quest-close-btn" style="width:36px;height:36px;font-size:0.9rem;flex-shrink:0" aria-label="Close">✕</button>
+      </div>
+      
+      <p style="font-size:0.9rem;color:rgba(255,255,255,0.8);margin-bottom:16px">Selesaikan misi berikut setiap harinya untuk mendapatkan hadiah koin gratis!</p>
+      
+      <div id="quest-list" style="display:flex;flex-direction:column;gap:12px">
+        <!-- Quests rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="howto-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Cara Bermain">
+    <div class="modal-card" style="max-width:380px;text-align:left;padding:24px 20px">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 class="modal-title" style="margin:0;font-size:1.3rem">📖 Cara Bermain</h2>
+        <button class="btn-icon" id="howto-close-btn" style="width:36px;height:36px;font-size:0.9rem;flex-shrink:0" aria-label="Close">✕</button>
+      </div>
+
+      <!-- SWAP -->
+      <div class="howto-section">
+        <div class="howto-section-title">👆 Cara Tukar</div>
+        <div class="howto-row">
+          <span class="howto-icon">🐱</span>
+          <div class="howto-text">
+            <strong>Tap + Tap</strong>
+            <span>Tap satu hewan, lalu tap hewan sebelahnya untuk menukar posisi</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">👆</span>
+          <div class="howto-text">
+            <strong>Swipe Langsung</strong>
+            <span>Swipe / geser hewan ke atas, bawah, kiri, atau kanan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- MATCH TYPES -->
+      <div class="howto-section">
+        <div class="howto-section-title">✨ Jenis Match</div>
+        <div class="howto-match-grid">
+          <div class="howto-match-item">
+            <span class="howto-match-emoji">🐱🐱🐱</span>
+            <span class="howto-match-result">+30 pts</span>
+            <span class="howto-match-name">Match 3</span>
+          </div>
+          <div class="howto-match-item">
+            <span class="howto-match-emoji">🐰🐰🐰🐰</span>
+            <span class="howto-match-result">🚀</span>
+            <span class="howto-match-name">Match 4 → Rocket</span>
+          </div>
+          <div class="howto-match-item">
+            <span class="howto-match-emoji">🐹🐹🐹🐹🐹</span>
+            <span class="howto-match-result">🌈</span>
+            <span class="howto-match-name">Match 5 → Rainbow</span>
+          </div>
+          <div class="howto-match-item" style="grid-column:span 3">
+            <span class="howto-match-emoji" style="letter-spacing:0">🦊🦊🦊 / 🦊🦊 (L/T Shape)</span>
+            <span class="howto-match-result">💣</span>
+            <span class="howto-match-name">L atau T Shape → Bomb</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- SPECIAL ITEMS -->
+      <div class="howto-section">
+        <div class="howto-section-title">💫 Item Spesial</div>
+        <div class="howto-row">
+          <span class="howto-icon">🚀</span>
+          <div class="howto-text">
+            <strong>Rocket (Match 4)</strong>
+            <span>Menghapus seluruh 1 baris atau 1 kolom secara otomatis</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">💣</span>
+          <div class="howto-text">
+            <strong>Bomb (L/T Shape)</strong>
+            <span>Menghapus semua hewan di area 3×3 di sekelilingnya</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">🌈</span>
+          <div class="howto-text">
+            <strong>Rainbow (Match 5)</strong>
+            <span>Tukar dengan hewan manapun → hapus SEMUA hewan sejenis itu!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- PARTY METER -->
+      <div class="howto-section">
+        <div class="howto-section-title">🎉 Party Meter</div>
+        <div class="howto-row">
+          <span class="howto-icon">🎊</span>
+          <div class="howto-text">
+            <strong>Isi Party Meter!</strong>
+            <span>Setiap match mengisi meter. Saat 100% → <strong style="color:var(--pink)">PARTY TIME</strong> selama 10 detik! Semua skor ×2 + confetti!</span>
+          </div>
+        </div>
+        <div style="margin-top:8px;background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:8px 12px">
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px">Isi per match:</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;font-size:0.72rem;font-weight:700">
+            <span style="color:var(--cyan)">Match 3: +5</span>
+            <span style="color:var(--gold)">Match 4: +10</span>
+            <span style="color:var(--pink)">Match 5: +15</span>
+            <span style="color:var(--red)">Bomb: +20</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- COMBO -->
+      <div class="howto-section">
+        <div class="howto-section-title">⚡ Combo System</div>
+        <div class="howto-row">
+          <span class="howto-icon">✨</span>
+          <div class="howto-text">
+            <strong>Chain Combo!</strong>
+            <span>Saat hewan jatuh dan otomatis membuat match baru → COMBO! Skor berlipat makin banyak!</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">
+          <span style="background:rgba(255,255,255,0.07);border-radius:99px;padding:3px 10px;font-size:0.7rem;color:var(--gold)">×2 → +20%</span>
+          <span style="background:rgba(255,255,255,0.07);border-radius:99px;padding:3px 10px;font-size:0.7rem;color:var(--pink)">×3 → +50%</span>
+          <span style="background:rgba(255,255,255,0.07);border-radius:99px;padding:3px 10px;font-size:0.7rem;color:var(--purple-light)">×4 → ×2</span>
+          <span style="background:rgba(255,222,89,0.15);border:1px solid rgba(255,222,89,0.3);border-radius:99px;padding:3px 10px;font-size:0.7rem;color:var(--gold)">×5 → 🎉 PARTY!</span>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- OBSTACLES -->
+      <div class="howto-section">
+        <div class="howto-section-title">😤 Rintangan</div>
+        <div class="howto-row">
+          <span class="howto-icon">👿</span>
+          <div class="howto-text">
+            <strong>Angry (HP:1)</strong>
+            <span>Tidak bisa dipindah. Hancurkan dengan match di sebelahnya</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">😤</span>
+          <div class="howto-text">
+            <strong>Angry Strong (HP:2)</strong>
+            <span>Butuh 2 kali match di sebelahnya untuk hancur</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">😪</span>
+          <div class="howto-text">
+            <strong>Sleeping</strong>
+            <span>Menutupi tile. Hancurkan dengan match di sebelahnya</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">😢</span>
+          <div class="howto-text">
+            <strong>Crying</strong>
+            <span>Setiap 3 giliran menyebar ke tile baru! Segera bersihkan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- BOOSTERS -->
+      <div class="howto-section">
+        <div class="howto-section-title">🔧 Booster</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:8px;text-align:center">
+            <div style="font-size:1.4rem">🔨</div>
+            <div style="font-size:0.72rem;font-weight:700;color:white;margin-top:2px">Hammer</div>
+            <div style="font-size:0.65rem;color:var(--text-muted)">Hapus 1 tile</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:8px;text-align:center">
+            <div style="font-size:1.4rem">💣</div>
+            <div style="font-size:0.72rem;font-weight:700;color:white;margin-top:2px">Bomb</div>
+            <div style="font-size:0.65rem;color:var(--text-muted)">Taruh Bomb di board</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:8px;text-align:center">
+            <div style="font-size:1.4rem">🚀</div>
+            <div style="font-size:0.72rem;font-weight:700;color:white;margin-top:2px">Rocket</div>
+            <div style="font-size:0.65rem;color:var(--text-muted)">Taruh Rocket di board</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:8px;text-align:center">
+            <div style="font-size:1.4rem">🌈</div>
+            <div style="font-size:0.72rem;font-weight:700;color:white;margin-top:2px">Rainbow</div>
+            <div style="font-size:0.65rem;color:var(--text-muted)">Taruh Rainbow di board</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- STARS -->
+      <div class="howto-section" style="margin-bottom:0">
+        <div class="howto-section-title">⭐ Sistem Bintang</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:10px;text-align:center;min-width:80px">
+            <div style="font-size:1rem">⭐⭐⭐</div>
+            <div style="font-size:0.7rem;color:var(--gold);font-weight:700">90–100%</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:10px;text-align:center;min-width:80px">
+            <div style="font-size:1rem">⭐⭐</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700">60–89%</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:var(--radius-md);padding:10px;text-align:center;min-width:80px">
+            <div style="font-size:1rem">⭐</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700">30–59%</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <button class="btn btn-primary" onclick="document.getElementById('howto-overlay').classList.add('hidden')" style="width:100%;padding:14px">
+          🎮 Siap Main!
+        </button>
+      </div>
+
+    </div><!-- .modal-card -->
+  </div><!-- #howto-overlay -->
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- DAILY REWARD OVERLAY                            -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="daily-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h2 class="modal-title">📅 Daily Reward!</h2>
+      <p class="modal-sub">Login tiap hari untuk hadiah lebih besar!</p>
+      
+      <div id="daily-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px">
+        <!-- Rendered by JS -->
+      </div>
+      
+      <button class="btn btn-gold w-full" id="btn-claim-daily" style="padding:14px;font-size:1.1rem">
+        🎁 Claim Reward
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PROFILE OVERLAY                                 -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="profile-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width:340px;text-align:left;position:relative" id="profile-modal-content">
+      <!-- Rendered by JS -->
+    </div>
+    <button class="btn-icon" id="profile-close-btn" style="position:absolute;top:20px;right:20px;z-index:155">✕</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- QUESTS OVERLAY                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="quest-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width:360px;text-align:left;position:relative" id="quest-modal-content">
+      <!-- Rendered by JS -->
+    </div>
+    <button class="btn-icon" id="quest-close-btn" style="position:absolute;top:20px;right:20px;z-index:155">✕</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/bundle_index.js"></script>
+  <script>
+    // Load save data for stats
+    (function() {
+      try {
+        const save  = JSON.parse(localStorage.getItem('emoji_party_match_save')) || {};
+        const stars = Object.values(save.stars || {}).reduce((a,b) => a+b, 0);
+        const el    = id => document.getElementById(id);
+        const s = el('stats-level');
+        const t = el('stats-stars');
+        const u = el('stats-coins');
+        const ca = el('coins-amount');
+        if (s)  s.textContent  = save.level  || 1;
+        if (t)  t.textContent  = stars;
+        if (u)  u.textContent  = (save.coins || 0).toLocaleString();
+        if (ca) ca.textContent = (save.coins || 0).toLocaleString();
+      } catch(e) {}
+    })();
+
+    // How-to-play close
+    document.getElementById('howto-close-btn')?.addEventListener('click', () => {
+      document.getElementById('howto-overlay').classList.add('hidden');
+    });
+    document.getElementById('howto-open-btn')?.addEventListener('click', () => {
+      document.getElementById('howto-overlay').classList.remove('hidden');
+    });
+    // Click outside to close
+    document.getElementById('howto-overlay')?.addEventListener('click', (e) => {
+      if (e.target.id === 'howto-overlay') document.getElementById('howto-overlay').classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

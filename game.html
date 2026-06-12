@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Emoji Party Match – Gameplay. Tukar hewan imut, buat combo, raih bintang!">
+  <title>Emoji Party Match 🎮</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <!-- Background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-sparkles"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Combo Display -->
+  <div id="combo-display"></div>
+
+  <!-- Party Time Overlay -->
+  <div id="party-time-overlay">
+    <div id="party-banner"></div>
+    <div id="party-timer-bar"></div>
+  </div>
+
+  <!-- ═══════════ GAME SCREEN ═══════════ -->
+  <div id="game-screen">
+
+    <!-- TOP HUD -->
+    <div id="top-hud">
+      <!-- Row 1: Back + Level + Score + Moves -->
+      <div class="hud-row">
+        <a href="index.html" class="btn-icon" style="text-decoration:none;font-size:1rem" aria-label="Back">←</a>
+        <div class="stat-card" style="min-width:64px">
+          <span class="stat-label">Level</span>
+          <span class="stat-value pink" id="level-label">1</span>
+        </div>
+        <div class="stat-card" style="flex:2">
+          <span class="stat-label">Score</span>
+          <span class="stat-value gold" id="score-val">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Moves</span>
+          <span class="stat-value cyan" id="moves-val">15</span>
+        </div>
+      </div>
+
+      <!-- Row 2: Goal -->
+      <div id="goal-display">
+        <span class="goal-label">Goal:</span>
+      </div>
+
+      <!-- Row 3: Party Meter -->
+      <div class="hud-row" id="party-meter-wrap">
+        <span class="party-label">🎉 Party</span>
+        <div id="party-meter-track">
+          <div id="party-meter-fill"></div>
+        </div>
+        <span id="party-pct">0%</span>
+      </div>
+    </div>
+
+    <!-- BOARD -->
+    <div id="board-wrap">
+      <!-- Mascot Mochi — reacts to gameplay -->
+      <div id="mascot-container"></div>
+      <div id="board-container">
+        <div id="board" role="grid" aria-label="Game Board"></div>
+      </div>
+    </div>
+
+  <!-- ═══════════ NO LIVES OVERLAY ═══════════ -->
+  <div id="no-lives-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <span class="modal-emoji">❤️</span>
+      <h2 class="modal-title">Nyawa Habis!</h2>
+      <p class="modal-sub">Nyawa kamu sudah habis 😢<br>Tunggu regenerasi atau beli dengan koin!</p>
+      <div id="lives-regen-timer" style="font-size:1.4rem;font-weight:900;color:#ff6eb4;margin-bottom:10px">30:00</div>
+      <div class="modal-buttons">
+        <button class="btn btn-gold" id="btn-buy-lives">🪙 Beli 5 Nyawa (100 koin)</button>
+        <button class="btn btn-primary" id="btn-wait-lives">⏰ Tunggu Regen</button>
+        <button class="btn" style="background:var(--glass-bg);border:1px solid var(--glass-border);color:white;padding:12px 24px" id="btn-quit-lives">🏠 Kembali ke Menu</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- BOTTOM BAR -->
+    <div id="bottom-bar">
+      <button class="booster-btn has-tooltip" id="booster-hammer" aria-label="Hammer">
+        <span class="booster-emoji">🔨</span>
+        <span class="booster-label">Hammer</span>
+        <span class="booster-count">3</span>
+        <div class="tooltip">Hapus 1 tile</div>
+      </button>
+      <button class="booster-btn has-tooltip" id="booster-bomb" aria-label="Bomb">
+        <span class="booster-emoji">💣</span>
+        <span class="booster-label">Bomb</span>
+        <span class="booster-count">2</span>
+        <div class="tooltip">Taruh Bomb</div>
+      </button>
+      <button class="booster-btn has-tooltip" id="booster-rocket" aria-label="Rocket">
+        <span class="booster-emoji">🚀</span>
+        <span class="booster-label">Rocket</span>
+        <span class="booster-count">2</span>
+        <div class="tooltip">Taruh Rocket</div>
+      </button>
+      <button class="booster-btn has-tooltip" id="booster-rainbow" aria-label="Rainbow">
+        <span class="booster-emoji">🌈</span>
+        <span class="booster-label">Rainbow</span>
+        <span class="booster-count">1</span>
+        <div class="tooltip">Taruh Rainbow</div>
+      </button>
+      <button id="pause-btn" aria-label="Pause">⏸</button>
+    </div>
+
+  </div><!-- #game-screen -->
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- WIN OVERLAY                                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="win-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card" id="win-modal">
+      <span class="modal-emoji">🎊</span>
+      <h2 class="modal-title">Level Clear!</h2>
+      <div class="win-score" id="win-score">0</div>
+      <div class="star-row" style="margin-bottom:14px"></div>
+      <div class="goal-summary"></div>
+      <div class="modal-buttons">
+        <button class="btn btn-gold" id="btn-win-next">▶️ Level Berikutnya</button>
+        <button class="btn btn-primary" id="btn-win-replay">🔄 Main Lagi</button>
+        <button class="btn" style="background:#ff6eb4;color:white;border:none;padding:12px 24px" id="btn-win-share">📤 Pamerkan!</button>
+        <button class="btn" style="background:var(--glass-bg);border:1px solid var(--glass-border);color:white;padding:12px 24px" id="btn-win-menu">🏠 Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- STORY MODAL                                     -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="story-overlay" class="overlay hidden" role="dialog" aria-modal="true" style="z-index:9000">
+    <div class="modal-card" style="max-width:400px;text-align:left;padding:0;overflow:hidden;border:2px solid #ffde59">
+      <div style="background:linear-gradient(135deg,rgba(255,222,89,0.3),rgba(255,110,180,0.3));padding:20px;display:flex;align-items:center;gap:16px">
+        <div style="font-size:4rem;animation:bounce-soft 2s infinite" id="story-speaker-emoji">🐱</div>
+        <div style="flex:1">
+          <div style="font-weight:900;font-size:1.2rem;color:white;margin-bottom:8px" id="story-speaker-name">Mochi</div>
+          <div style="font-size:1rem;color:rgba(255,255,255,0.9);line-height:1.4" id="story-text">Selamat datang di taman!</div>
+        </div>
+      </div>
+      <div style="padding:16px;background:rgba(0,0,0,0.5);text-align:right">
+        <button class="btn btn-primary" id="btn-story-next" style="padding:10px 24px">Lanjut ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- LOSE OVERLAY                                    -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="lose-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <span class="modal-emoji">😢</span>
+      <h2 class="modal-title" style="background:linear-gradient(135deg,#ff6b6b,#ff9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Hampir Berhasil!</h2>
+      <div class="win-score" style="color:var(--red);font-size:1.5rem" id="lose-score">0</div>
+      <p class="modal-sub">Langkah habis. Semangat coba lagi! 💪</p>
+      <div class="goal-summary"></div>
+      <div class="modal-buttons">
+        <button class="btn btn-primary" id="btn-lose-retry">🔄 Coba Lagi</button>
+        <button class="btn" style="background:var(--glass-bg);border:1px solid var(--glass-border);color:white;padding:12px 24px" id="btn-lose-menu">🏠 Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAUSE OVERLAY                                   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="pause-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <span class="modal-emoji">⏸️</span>
+      <h2 class="modal-title">Pause</h2>
+      <p class="modal-sub">Game dijeda — istirahat dulu!</p>
+      <div class="modal-buttons">
+        <button class="btn btn-primary" id="btn-resume">▶️ Lanjutkan</button>
+        <button class="btn btn-gold" id="sound-toggle" style="padding:12px 24px">🔊 Sound ON</button>
+        <button class="btn" style="background:rgba(126,249,255,0.15);border:1px solid rgba(126,249,255,0.3);color:var(--cyan);padding:12px 24px" id="btn-howto-ingame">📖 Cara Bermain</button>
+        <button class="btn" style="background:var(--glass-bg);border:1px solid var(--glass-border);color:white;padding:12px 24px" id="btn-restart">🔄 Restart</button>
+        <button class="btn" style="background:var(--glass-bg);border:1px solid var(--glass-border);color:white;padding:12px 24px" id="btn-quit">🏠 Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- HOW TO PLAY OVERLAY (in-game)                   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="howto-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width:380px;text-align:left;padding:24px 20px">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h2 class="modal-title" style="margin:0;font-size:1.3rem">📖 Cara Bermain</h2>
+        <button class="btn-icon" id="howto-close-btn" style="width:36px;height:36px;font-size:0.9rem;flex-shrink:0" aria-label="Close">✕</button>
+      </div>
+
+      <!-- SWAP -->
+      <div class="howto-section">
+        <div class="howto-section-title">👆 Cara Tukar</div>
+        <div class="howto-row">
+          <span class="howto-icon">🐱</span>
+          <div class="howto-text">
+            <strong>Tap + Tap</strong>
+            <span>Tap satu hewan, lalu tap hewan sebelahnya untuk menukar</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">👆</span>
+          <div class="howto-text">
+            <strong>Swipe</strong>
+            <span>Swipe hewan ke arah yang diinginkan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- MATCH TYPES -->
+      <div class="howto-section">
+        <div class="howto-section-title">✨ Jenis Match</div>
+        <div class="howto-match-grid">
+          <div class="howto-match-item">
+            <span class="howto-match-emoji">🐱🐱🐱</span>
+            <span class="howto-match-result">+30 pts</span>
+            <span class="howto-match-name">Match 3</span>
+          </div>
+          <div class="howto-match-item">
+            <span class="howto-match-emoji">🐰🐰🐰🐰</span>
+            <span class="howto-match-result">🚀 Rocket</span>
+            <span class="howto-match-name">Match 4</span>
+          </div>
+          <div class="howto-match-item">
+            <span class="howto-match-emoji">🐹🐹🐹🐹🐹</span>
+            <span class="howto-match-result">🌈 Rainbow</span>
+            <span class="howto-match-name">Match 5</span>
+          </div>
+          <div class="howto-match-item" style="grid-column:span 3">
+            <span class="howto-match-result">💣 Bomb</span>
+            <span class="howto-match-name">L Shape atau T Shape</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- SPECIAL ITEMS -->
+      <div class="howto-section">
+        <div class="howto-section-title">💫 Item Spesial</div>
+        <div class="howto-row">
+          <span class="howto-icon">🚀</span>
+          <div class="howto-text">
+            <strong>Rocket</strong>
+            <span>Hapus 1 baris atau 1 kolom penuh</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">💣</span>
+          <div class="howto-text">
+            <strong>Bomb</strong>
+            <span>Hapus area 3×3 di sekitarnya</span>
+          </div>
+        </div>
+        <div class="howto-row">
+          <span class="howto-icon">🌈</span>
+          <div class="howto-text">
+            <strong>Rainbow</strong>
+            <span>Tukar dengan hewan manapun → hapus SEMUA jenis itu</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- PARTY METER -->
+      <div class="howto-section">
+        <div class="howto-section-title">🎉 Party Time!</div>
+        <div class="howto-row">
+          <span class="howto-icon">🎊</span>
+          <div class="howto-text">
+            <strong>Isi Party Meter</strong>
+            <span>Saat 100% → PARTY TIME! Skor ×2 + confetti selama 10 detik!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-divider"></div>
+
+      <!-- OBSTACLES -->
+      <div class="howto-section">
+        <div class="howto-section-title">😤 Rintangan</div>
+        <div class="howto-row"><span class="howto-icon">👿</span>
+          <div class="howto-text"><strong>Angry (HP:1)</strong><span>Hancurkan dengan match di sebelahnya</span></div></div>
+        <div class="howto-row"><span class="howto-icon">😤</span>
+          <div class="howto-text"><strong>Angry Strong (HP:2)</strong><span>Butuh 2 kali match</span></div></div>
+        <div class="howto-row"><span class="howto-icon">😪</span>
+          <div class="howto-text"><strong>Sleeping</strong><span>Hancurkan dengan match di sebelahnya</span></div></div>
+        <div class="howto-row"><span class="howto-icon">😢</span>
+          <div class="howto-text"><strong>Crying</strong><span>Menyebar tiap 3 giliran — cepat bersihkan!</span></div></div>
+      </div>
+
+      <div style="margin-top:18px">
+        <button class="btn btn-primary" id="howto-close-btn2" style="width:100%;padding:14px">
+          🎮 Kembali ke Game!
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <!-- Game Module -->
+  <script src="js/bundle_game.js"></script>
+
+  <script>
+    // How-to-play toggle (in-game)
+    document.getElementById('btn-howto-ingame')?.addEventListener('click', () => {
+      document.getElementById('pause-overlay').classList.add('hidden');
+      document.getElementById('howto-overlay').classList.remove('hidden');
+    });
+    function closeHowto() {
+      document.getElementById('howto-overlay').classList.add('hidden');
+    }
+    document.getElementById('howto-close-btn')?.addEventListener('click', closeHowto);
+    document.getElementById('howto-close-btn2')?.addEventListener('click', closeHowto);
+    document.getElementById('howto-overlay')?.addEventListener('click', e => {
+      if (e.target.id === 'howto-overlay') closeHowto();
+    });
+  </script>
+</body>
+</html>

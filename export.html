@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Exporter Tool 🎨</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    :root {
+      --bg: #1a0b2e;
+      --panel: rgba(255, 255, 255, 0.05);
+      --pink: #ff6eb4;
+    }
+    body {
+      margin: 0; padding: 20px 40px;
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: white;
+      text-align: center;
+    }
+    h1 { color: var(--pink); margin-bottom: 5px; }
+    p { color: rgba(255,255,255,0.7); margin-bottom: 30px; }
+    
+    .category-container {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+    .category-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #c084fc;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+    }
+    .emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .emoji-card {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      width: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .emoji-preview {
+      font-size: 2.5rem;
+      line-height: 1;
+      font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+    }
+    .emoji-name {
+      font-size: 0.65rem;
+      color: #aaa;
+      word-break: break-all;
+      text-align: center;
+    }
+    .btn {
+      background: linear-gradient(135deg, #c084fc, #ff6eb4);
+      border: none;
+      border-radius: 99px;
+      padding: 16px 40px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 110, 180, 0.4);
+      transition: transform 0.2s;
+      margin-bottom: 20px;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn:active { transform: scale(0.95); }
+    #status {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #86efac;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Emoji Exporter Tool 🎨</h1>
+  <p>Alat ini akan mengekspor semua emoji secara terstruktur ke dalam 1 file <b>.ZIP</b> berisi gambar PNG (256x256 px).</p>
+
+  <button class="btn" id="btn-export">📦 Download Semua (Format .ZIP)</button>
+  <div id="status"></div>
+  <br>
+
+  <div id="app-container"></div>
+
+  <script>
+    // Data dikategorikan agar rapi
+    const emojiCategories = [
+      {
+        title: "1. Gameplay Tiles (Bidak Utama)",
+        folder: "Gameplay",
+        items: [
+          { char: '🌸', name: 'tile_sakura' },
+          { char: '🦋', name: 'tile_butterfly' },
+          { char: '🎀', name: 'tile_ribbon' },
+          { char: '🍓', name: 'tile_strawberry' },
+          { char: '💎', name: 'tile_diamond' },
+          { char: '🌙', name: 'tile_moon' }
+        ]
+      },
+      {
+        title: "2. Obstacles (Rintangan)",
+        folder: "Gameplay",
+        items: [
+          { char: '😪', name: 'obs_sleeping' },
+          { char: '😠', name: 'obs_angry' },
+          { char: '😡', name: 'obs_angry_strong' },
+          { char: '😢', name: 'obs_crying' }
+        ]
+      },
+      {
+        title: "3. Boosters & Power-ups",
+        folder: "Gameplay",
+        items: [
+          { char: '💣', name: 'item_bomb' },
+          { char: '🚀', name: 'item_rocket' },
+          { char: '🌈', name: 'item_rainbow' },
+          { char: '🔨', name: 'item_hammer' }
+        ]
+      },
+      {
+        title: "4. UI & Menu Icons",
+        folder: "UI",
+        items: [
+          { char: '⭐', name: 'ui_star' },
+          { char: '🪙', name: 'ui_coin' },
+          { char: '❤️', name: 'ui_heart' },
+          { char: '⏸️', name: 'ui_pause' },
+          { char: '🏠', name: 'ui_home' },
+          { char: '🔄', name: 'ui_restart' },
+          { char: '▶️', name: 'ui_play' },
+          { char: '🔊', name: 'ui_sound_on' },
+          { char: '🔇', name: 'ui_sound_off' },
+          { char: '📖', name: 'ui_book' }
+        ]
+      },
+      {
+        title: "5. Story & Environment (Dunia)",
+        folder: "Environment",
+        items: [
+          { char: '🐱', name: 'mascot_mochi' },
+          { char: '💔', name: 'env_broken_heart' },
+          { char: '🐇', name: 'env_rabbit' },
+          { char: '🍄', name: 'env_mushroom' },
+          { char: '🍬', name: 'env_candy' },
+          { char: '✨', name: 'env_sparkles' },
+          { char: '🤩', name: 'env_star_eyes' },
+          { char: '👀', name: 'env_eyes' },
+          { char: '🐾', name: 'env_paw' },
+          { char: '😲', name: 'env_shocked' },
+          { char: '🤤', name: 'env_drool' },
+          { char: '🏖', name: 'env_beach' },
+          { char: '😒', name: 'env_unamused' },
+          { char: '🐚', name: 'env_shell' },
+          { char: '😤', name: 'env_triumph' },
+          { char: '🌳', name: 'env_tree' },
+          { char: '☁', name: 'env_cloud' },
+          { char: '🌠', name: 'env_shooting_star' },
+          { char: '🏰', name: 'env_castle' },
+          { char: '🌌', name: 'env_galaxy' },
+          { char: '🛸', name: 'env_ufo' },
+          { char: '☄', name: 'env_comet' },
+          { char: '🌟', name: 'env_glowing_star' },
+          { char: '🎁', name: 'env_gift' }
+        ]
+      },
+      {
+        title: "6. Achievements (Lencana)",
+        folder: "UI",
+        items: [
+          { char: '💫', name: 'achv_dizzy' },
+          { char: '👑', name: 'achv_crown' },
+          { char: '🎉', name: 'achv_party_popper' },
+          { char: '🎊', name: 'achv_confetti' },
+          { char: '🗺️', name: 'achv_map' },
+          { char: '👸', name: 'achv_princess' }
+        ]
+      },
+      {
+        title: "7. Player Avatars",
+        folder: "UI",
+        items: [
+          { char: '🐰', name: 'ava_rabbit' },
+          { char: '🐻', name: 'ava_bear' },
+          { char: '🐶', name: 'ava_dog' },
+          { char: '🦊', name: 'ava_fox' },
+          { char: '🐼', name: 'ava_panda' },
+          { char: '🐨', name: 'ava_koala' },
+          { char: '🐯', name: 'ava_tiger' },
+          { char: '🦁', name: 'ava_lion' },
+          { char: '🐮', name: 'ava_cow' },
+          { char: '🐷', name: 'ava_pig' },
+          { char: '🐸', name: 'ava_frog' }
+        ]
+      }
+    ];
+
+    const container = document.getElementById('app-container');
+    const statusEl = document.getElementById('status');
+
+    // Render Preview ke layar
+    emojiCategories.forEach(cat => {
+      const catDiv = document.createElement('div');
+      catDiv.className = 'category-container';
+      
+      const title = document.createElement('div');
+      title.className = 'category-title';
+      title.textContent = cat.title;
+      catDiv.appendChild(title);
+
+      const grid = document.createElement('div');
+      grid.className = 'emoji-grid';
+
+      cat.items.forEach(e => {
+        const card = document.createElement('div');
+        card.className = 'emoji-card';
+        card.innerHTML = `
+          <div class="emoji-preview">${e.char}</div>
+          <div class="emoji-name">${e.folder}/${e.name}.png</div>
+        `;
+        grid.appendChild(card);
+      });
+
+      catDiv.appendChild(grid);
+      container.appendChild(catDiv);
+    });
+
+    // Fungsi Render Canvas
+    function getEmojiBase64(char, size = 256) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      ctx.clearRect(0, 0, size, size);
+      ctx.font = `${size * 0.8}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      
+      ctx.fillText(char, size / 2, size / 2 + (size * 0.08));
+      
+      const dataUrl = canvas.toDataURL("image/png");
+      // Hanya ambil Base64 murni tanpa prefix "data:image/png;base64,"
+      return dataUrl.split(',')[1];
+    }
+
+    // ZIP & Download Handler
+    document.getElementById('btn-export').addEventListener('click', async () => {
+      if (typeof JSZip === 'undefined') {
+        alert("Library JSZip belum termuat, pastikan koneksi internet aktif!");
+        return;
+      }
+
+      statusEl.textContent = '⏳ Sedang merender emoji dan membuat file ZIP...';
+      const zip = new JSZip();
+
+      // Loop semua kategori & items
+      emojiCategories.forEach(cat => {
+        // Buat subfolder di dalam zip
+        const folder = zip.folder(cat.folder);
+        cat.items.forEach(e => {
+          const base64Data = getEmojiBase64(e.char);
+          folder.file(`${e.name}.png`, base64Data, {base64: true});
+        });
+      });
+
+      // Generate ZIP blob
+      try {
+        const content = await zip.generateAsync({type: "blob"});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = "Emoji_Party_Match_Assets.zip";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+        statusEl.textContent = '✅ Berhasil! File Emoji_Party_Match_Assets.zip telah didownload.';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = '❌ Terjadi kesalahan saat membuat ZIP.';
+        statusEl.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
