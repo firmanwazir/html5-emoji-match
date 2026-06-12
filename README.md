@@ -8,6 +8,12 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
 
+<br>
+
+### 🕹️ [PLAY THE GAME NOW](https://firmanwazir.github.io/html5-emoji-match/)
+
+<br>
+
 [*[Read in Indonesian / Baca dalam Bahasa Indonesia]👇*](#indonesian-bahasa-indonesia)
 
 </div>
