@@ -18,7 +18,7 @@
 
 **Emoji Party Match HTML5** is a casual match-3 puzzle game featuring a beautiful feminine theme (Sakura, ribbons, cosmetics). Built entirely using pure web technologies (**Vanilla JS, HTML5 Canvas, and CSS3**). This game is designed to be **100% Standalone**, meaning you don't need a local server (like Node.js/Apache) to run it. Simply open the index file in your browser, and you are ready to play!
 
-## ✨ Key Features (English)
+## ✨ Key Features
 
 - **🎀 Elegant Feminine Theme:** Modern glassmorphism UI design with pastel color palettes and buttery smooth micro-animations (60fps).
 - **🐱 Interactive Mascot (Mochi):** An animated cat mascot that reacts (*happy, sad, excited*) to your moves and combos during gameplay.
