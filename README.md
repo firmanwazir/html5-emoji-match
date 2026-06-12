@@ -13,7 +13,7 @@
 </div>
 
 <p align="center">
-  <img src="screenshot.png" alt="Emoji Party Match Gameplay" width="600" style="border-radius:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+  <img src="screenshot.png" alt="Emoji Party Match Gameplay" width="280" style="border-radius:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
 </p>
 
 **Emoji Party Match HTML5** is a casual match-3 puzzle game featuring a beautiful feminine theme (Sakura, ribbons, cosmetics). Built entirely using pure web technologies (**Vanilla JS, HTML5 Canvas, and CSS3**). This game is designed to be **100% Standalone**, meaning you don't need a local server (like Node.js/Apache) to run it. Simply open the index file in your browser, and you are ready to play!
@@ -76,7 +76,7 @@ This game requires absolutely zero build tools or servers to play.
 </div>
 
 <p align="center">
-  <img src="screenshot.png" alt="Emoji Party Match Gameplay" width="600" style="border-radius:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+  <img src="screenshot.png" alt="Emoji Party Match Gameplay" width="280" style="border-radius:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
 </p>
 
 **Emoji Party Match HTML5** adalah game *Match-3* bergaya kasual dengan tema feminin (Sakura, pita, kosmetik) yang dibangun sepenuhnya menggunakan teknologi web murni (**Vanilla JS, HTML5 Canvas, dan CSS3**). Game ini dirancang **100% Standalone**, artinya kamu tidak memerlukan server lokal (Node.js/Apache) untuk menjalankannya. Cukup buka file indeks di *browser*, dan game siap dimainkan!
